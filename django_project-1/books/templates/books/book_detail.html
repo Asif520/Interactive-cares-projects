@@ -1,0 +1,19 @@
+{% extends 'books/base.html' %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ object.title }}</h1>
+    <p><strong>Author:</strong> {{ object.author }}</p>
+    <p><strong>Category:</strong> {{ object.get_category_display }}</p>
+    <p><strong>Published:</strong> {{ object.published_date }}</p>
+    <p><strong>Status:</strong> 
+        <span class="{% if object.status == 'available' %}available{% else %}borrowed{% endif %}">
+            {{ object.get_status_display }}
+        </span>
+    </p>
+    <p><strong>Description:</strong> {{ object.description|linebreaks }}</p>
+
+    <button class="bttn btns-edit"><a href="{% url 'book_edit' object.pk %}">Edit Book</a></button> 
+    <button class="bttn btns-toList"><a href="{% url 'book_list' %}">Back to List</a></button>
+{% endblock %}

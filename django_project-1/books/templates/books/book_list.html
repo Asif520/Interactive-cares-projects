@@ -1,0 +1,94 @@
+{% extends 'books/base.html' %}
+
+{% block title %}All Books{% endblock %}
+
+{% block content %}
+    <h1>Library Books</h1>
+    <div class="add-book">
+        <a href="{% url 'book_add' %}" class="btn btn-add">Add New Book</a>
+    </div>
+    
+
+    <!-- Desktop: Table -->
+    <table class="book-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Published</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td><a class="td-a" href="{% url 'book_detail' book.pk %}">{{ book.title }}</a></td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.get_category_display }}</td>
+                <td>{{ book.published_date }}</td>
+                <td class="{% if book.status == 'available' %}status-available{% else %}status-borrowed{% endif %}">
+                    {{ book.get_status_display }}
+                </td>
+                <td >
+                    <div style="display: flex;gap: .5rem;">
+                        <a href="{% url 'book_edit' book.pk %}" class="btn btn-edit">Edit</a>
+                        <button  class="btn btn-delete" onclick="openDeleteModal('{{ book.title|escapejs }}', '{{ book.pk }}')">
+                            Delete
+                        </button>
+                    </div>
+                    
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No books found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Mobile/Tablet: Cards -->
+    <div class="book-cards">
+        {% for book in books %}
+        <div class="book-card">
+            <div class="card-content">
+                <h3 class="card-title">
+                    <a href="{% url 'book_detail' book.pk %}">{{ book.title }}</a>
+                </h3>
+                <div class="card-meta">By {{ book.author }}</div>
+                <div class="card-meta">{{ book.get_category_display }} • {{ book.published_date }}</div>
+                <div class="card-status {% if book.status == 'available' %}status-available{% else %}status-borrowed{% endif %}">
+                    {{ book.get_status_display }}
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'book_edit' book.pk %}" class="btn btn-edit">Edit</a>
+                    <a href="{% url 'book_delete' book.pk %}" class="btn btn-delete">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No books available.</p>
+        {% endfor %}
+    </div>
+
+    <!-- ── Delete Confirmation Modal ── -->
+    <div id="deleteModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete <strong id="bookTitle"></strong>?</p>
+            <p class="warning">This action cannot be undone.</p>
+            
+            <form id="deleteForm" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="pk" id="bookPk">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                    <button type="submit" class="btn btn-delete">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}
