@@ -53,7 +53,7 @@ Follow these steps to get the project running locally:
 ### 6. Run the development server
   - python manage.py runserver
 
-**Open your browser and go to:
+**Open your browser and go to:**
 
 Main app: http://127.0.0.1:8000/
 Admin panel: http://127.0.0.1:8000/admin/
